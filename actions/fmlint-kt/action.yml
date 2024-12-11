@@ -94,7 +94,7 @@ runs:
       id: changed_files
       shell: bash
       run: |
-        git branch
+        git branch -a
         changed_files=$(git diff --name-only origin/${{ env.base_ref }} origin/${{ env.head_ref }})
         filtered_changed_files=$(echo "$changed_files" | grep -E "\.kt$")
           
