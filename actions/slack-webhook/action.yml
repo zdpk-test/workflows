@@ -1,0 +1,79 @@
+name: Send Slack Notification
+description: "Send a message to a Slack channel"
+
+inputs:
+  env:
+    description: "Environment"
+    required: true
+  title:
+    description: "Title of the message"
+    required: true
+  message:
+    description: "Message to be sent"
+    required: true
+  footer:
+    description: "Footer of the message"
+    required: false
+    default: ""
+  webhook_url:
+    description: "Slack webhook URL"
+    required: true
+  channel:
+    description: "Slack channel to send the message"
+    required: true
+  status:
+    description: "Status of the message"
+    required: true
+      # - ok
+      # - err
+      # - no_change
+      # - warning
+
+runs:
+  using: "composite"
+  steps:
+  - name: Set color based on status
+    id: set_color
+    shell: bash
+    run: |
+      if [ "${{ inputs.status }}" == "ok" ]; then
+        echo "color=36a64f" >> $GITHUB_ENV  # green
+      elif [ "${{ inputs.status }}" == "err" ]; then
+        echo "color=ff0000" >> $GITHUB_ENV # red
+      elif [ "${{ inputs.status }}" == "no_change" ]; then
+       echo "color=d3d3d3" >> $GITHUB_ENV  # gray
+      elif [ "${{ inputs.status }}" == "warning" ]; then
+        echo "color=#ffcc00" >> $GITHUB_ENV  # yellow
+      else
+        echo "Invalid status: ${{ inputs.status }}"
+        echo "Valid statuses: ok, err, no_change, warning"
+        exit 1
+      fi
+
+  - name: Send Slack message via HTTP Request
+    shell: bash
+    run: |
+      curl -X POST \
+        -H 'Content-Type: application/json' \
+        --data '{
+          "channel": "${{ inputs.channel }}",
+          "username": "GitHub Actions",
+          "attachments": [
+            {
+              "color": "${{ steps.set_color.outputs.color }}",
+              "pretext": "GitHub Action Notification",
+              "title": "${{ inputs.title }}",
+              "text": "${{ inputs.message }}",
+              "footer": "${{ inputs.footer }}",
+              "footer_icon": "https://platform.slack-edge.com/img/default_application_icon.png",
+              "fields": [
+                {
+                  "title": "Status",
+                  "value": "${{ inputs.status }}",
+                  "short": false
+                }
+              ]
+            }
+          ]
+        }' \
+        ${{ inputs.webhook_url }}

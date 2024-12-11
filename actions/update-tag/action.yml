@@ -1,0 +1,119 @@
+name: "Update Yaml Property"
+description: "A custom action to update a yaml property and create a PR if updated."
+
+inputs:
+  env:
+    description: "Environment (e.g., dev, stag, qa, prod)"
+    required: true
+  github_token:
+    description: "GitHub token"
+    required: true
+  next_val:
+    description: "Next value for the property"
+    required: true
+  dir_path:
+    description: "Directory path to the yaml file"
+    required: true
+  file_name:
+    description: "Yaml file name"
+    required: true
+  property:
+    description: "Yaml property to be updated"
+    required: true
+  actor:
+    description: "Actor who triggered the action"
+    default: "github-actions[bot]"
+
+outputs:
+  status:
+    description: "Status of the action"
+    value:  ${{ steps.diff.outputs.status }}
+
+runs:
+  using: "composite"
+  steps:
+
+    - name: Install yq
+      shell: bash
+      run: |
+        if ! command -v yq &> /dev/null; then
+          YQ="${{ inputs.bin_path }}/yq"
+          wget https://github.com/mikefarah/yq/releases/download/v4.40.5/yq_linux_amd64 -O $YQ
+          chmod +x $YQ         
+          echo "installing yq..."
+        else
+          echo "yq is already installed. skip installation"
+        fi
+
+    - name: Check and update current tag if is not duplicate
+      id: diff
+      shell: bash
+      run: |
+        CONFIG_PATH="${{ inputs.dir_path }}/${{ inputs.file_name }}"
+        PREV_VAL=$(yq '${{ inputs.property }}' "$CONFIG_PATH")
+
+        if [ "$PREV_VAL" == "${{ inputs.next_val }}" ]; then
+          echo "should_update_tag=true" >> $GITHUB_OUTPUT
+          # echo "status=no_change" >> $GITHUB_OUTPUT
+          echo "::set-output name=status::no_change"
+          exit 0
+        fi
+
+        echo "prev_val=$PREV_VAL" >> $GITHUB_OUTPUT
+        echo "::set-output name=status::ok"
+
+    - name: Update tag
+      shell: bash
+      # syntax issue -> \" interpolation is needed
+      run: |
+        CONFIG_PATH="${{ inputs.dir_path }}/${{ inputs.file_name }}"
+        yq e -i '${{ inputs.property }} = "${{ inputs.next_val }}"' "$CONFIG_PATH"
+        echo "Updated tag from ${{ steps.diff.outputs.prev_val }} to ${{ inputs.next_val }}"
+
+    - name: Make a new branch
+      id: branch
+      shell: bash
+      run: |
+        TEMP_BRANCH_NAME="update-image-tag-${{ inputs.next_val }}"
+        echo "temp_branch_name=$TEMP_BRANCH_NAME" >> $GITHUB_OUTPUT
+        git checkout -b "$TEMP_BRANCH_NAME"
+        git config --global user.name ${{ inputs.actor }}
+        git config --global user.email ${{ inputs.actor }}@users.noreply.github.com
+
+    - name: Push to the temporary branch
+      shell: bash
+      run: |
+        git add .
+        git commit -m "[✅Automated Job] Update image tag to ${{ inputs.next_val }}"
+        git remote -v
+        git pull --rebase origin main
+        git push origin HEAD
+
+    # - name: Check if PR already exists
+    #   shell: bash
+    #   env:
+    #     GH_TOKEN: ${{ inputs.github_token }}
+    #   run: |
+    #     PR_EXISTS=$(gh pr list --base main --head ${{ inputs.actor }} --json number --jq '.[0].number')
+    #     if [[ -z "$PR_EXISTS" ]]; then
+    #       echo "PR about the tag `${{ inputs.next_val }}` already exists in the repo"
+    #       exit 1
+    #     fi
+
+    - name: Create PR if not exists
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.github_token }}
+      run: |
+        PR_BODY="Automated PR to update image tag in ${{ inputs.env }} environment
+        - New tag: ${{ inputs.next_val }}
+        - Environment: ${{ inputs.env }}
+        - Triggered by: ${{ github.event_name }}"
+
+        gh pr create \
+          --base main \
+          --head ${{ steps.branch.outputs.temp_branch_name }} \
+          --title "Automated PR to update image tag(${{ inputs.env }} - ${{ inputs.next_val }})" \
+          --body "$PR_BODY"
+
+      
