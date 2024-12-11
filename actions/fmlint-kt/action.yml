@@ -26,11 +26,12 @@ runs:
     # ---------------------------------------------------
     - name: Setup Ref
       shell: bash
+      # TODO: 
       run: |
         BASE_REF=${{ github.base_ref }}
         HEAD_REF=${{ github.head_ref }}
         if [[ -n "$BASE_REF" ]]; then
-          # BASE_REF=${{ github.event.before }}
+           BASE_REF=main
         fi
         if [[ -n "$HEAD_REF" ]]; then
           HEAD_REF=${{ github.ref_name }}
