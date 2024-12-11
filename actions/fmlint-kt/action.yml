@@ -54,7 +54,6 @@ runs:
 
         # 2-1. Push from target branch to target branch
         elif [[ "${{ github.ref_name }}" == "${{ inputs.branch }}" ]]; then
-            git fetch origin ${{ inputs.branch }}
             BASE_REF=${{ inputs.branch }}^
             HEAD_REF=${{ inputs.branch }}
 
@@ -94,6 +93,7 @@ runs:
       id: changed_files
       shell: bash
       run: |
+        git fetch origin ${{ inputs.branch }}
         git branch -a
         changed_files=$(git diff --name-only origin/${{ env.base_ref }} origin/${{ env.head_ref }})
         filtered_changed_files=$(echo "$changed_files" | grep -E "\.kt$")
