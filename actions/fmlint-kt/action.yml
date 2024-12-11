@@ -49,14 +49,13 @@ runs:
           BASE_REF=${{ github.base_ref }}
           HEAD_REF=${{ github.head_ref }}
 
-        # 2. Push
-        elif [[ "${{ github.event_name }}" == "push" ]]; then
+        # 2. Push | workflow_dispatch | 
+        # elif [[ "${{ github.event_name }}" == "push" ]]; then
 
-          # 2-1. Push from target branch to target branch
-          if [[ "${{ github.ref_name }}" == "${{ inputs.branch }}" ]]; then
+        # 2-1. Push from target branch to target branch
+        elif [[ "${{ github.ref_name }}" == "${{ inputs.branch }}" ]]; then
             BASE_REF=${{ inputs.branch }}~1
             HEAD_REF=${{ inputs.branch }}
-          fi
 
           # 2-2. Push from other branch to target branch & other events
           # not supported
