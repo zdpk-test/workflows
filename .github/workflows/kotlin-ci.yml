@@ -13,7 +13,7 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v2
         with:
-          distribution: "terumrin"
+          distribution: "temurin"
           java-version: "21"
 
       - name: Linting
