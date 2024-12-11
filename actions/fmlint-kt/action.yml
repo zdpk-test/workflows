@@ -37,18 +37,18 @@ runs:
         fi
         
 
-    - name: Checkout the code
-      shell: bash
-      uses: actions/checkout@v5
-      with:
-        ref: "main"
+    # - name: Checkout the code
+    #   shell: bash
+    #   uses: actions/checkout@v5
+    #   with:
+    #     ref: "main"
 
-    - name: Setup Language
-      shell: bash
-      uses: actions/setup-java@v2
-      with:
-        distribution: "temurin"
-        java-version: "21"
+    # - name: Setup Language
+    #   shell: bash
+    #   uses: actions/setup-java@v2
+    #   with:
+    #     distribution: "temurin"
+    #     java-version: "21"
 
     - name: Filter files to format & lint
       id: changed_files
