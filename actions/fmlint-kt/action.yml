@@ -101,7 +101,7 @@ runs:
       shell: bash
       run: |
         # 첫 커밋인 경우, 
-        if git rev-prase --verify HEAD~1 &> /dev/null; then
+        if git rev-parse --verify HEAD~1 &> /dev/null; then
           changed_files=$(git diff --name-only ${{ env.base_ref }} ${{ env.head_ref }})
         else
           changed_files=$(git diff --name-only HEAD)
