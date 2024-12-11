@@ -114,6 +114,9 @@ runs:
         # Filter for Kotlin files
         filtered_changed_files=$(echo "$changed_files" | grep -E "\.kt$" || true)
           
+        echo "changed_files=$changed_files"
+        echo "filtered_changed_files=$filtered_changed_files"
+        
         echo "changed_files=$filtered_changed_files" >> $GITHUB_ENV
 
     - name: Debug changed files
