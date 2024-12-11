@@ -1,9 +1,9 @@
 name: "s"
 description: ""
-# inputs:
-  # lang:
-  #   description: The action to use for setting up the language
-  #   required: true
+inputs:
+  branch:
+    description: "Branch name to progress the action"
+    default: "main"
 runs:
   using: composite
   steps:
@@ -24,6 +24,9 @@ runs:
     # the base_ref will be `null`
     # and head_ref will be the same
     # ---------------------------------------------------
+    # dev  -> main(PR)
+    # main -> main(push)
+    # x    -> main(push)
     - name: Debug Refs
       shell: bash
       run: |
@@ -37,15 +40,30 @@ runs:
       shell: bash
       # TODO: 
       run: |
+        # 1. PR
+
         if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-          BASE_REF=${{ github.event.pull_request.base.ref }}
-          HEAD_REF=${{ github.event.pull_request.head.ref }}
+          BASE_REF=${{ github.base_ref }}
+          HEAD_REF=${{ github.head_ref }}
+
+        # 2. Push
+        elif [[ "${{ github.event_name }}" == "push" ]]; then
+
+          # 2-1. Push from target branch to target branch
+          if [[ "${{ github.ref }}" == "${{ inputs.branch }}" ]]; then
+            BASE_REF=${{ inputs.branch }}
+            HEAD_REF=${{ inputs.branch }}
+          fi
+
+          # 2-2. Push from other branch to target branch & other events
+          # not supported
         else
-          BASE_REF="main"
-          HEAD_REF=${{ github.ref_name }}
+          echo "Unsupported event: ${{ github.event_name }}"
+          echo "Only push and pull_request events are supported"
+          exit 1
         fi
 
-        echo "base_ref=main" >> $GITHUB_ENV
+        echo "base_ref=$BASE_REF" >> $GITHUB_ENV
         echo "head_ref=$HEAD_REF" >> $GITHUB_ENV
         
     - name: Debug Env
