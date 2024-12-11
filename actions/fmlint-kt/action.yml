@@ -56,7 +56,7 @@ runs:
       id: changed_files
       shell: bash
       run: |
-        changed_files=$(git diff --name-only ${{ github.base_ref }} ${{ github.head_ref }})
+        changed_files=$(git diff --name-only ${{ env.base_ref }} ${{ env.head_ref }})
         filtered_changed_files=$(echo "$changed_files" | grep -E "\.kt$")
           
         echo "changed_files=$filtered_changed_files" >> $GITHUB_ENV
