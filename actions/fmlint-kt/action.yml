@@ -24,6 +24,13 @@ runs:
     # the base_ref will be `null`
     # and head_ref will be the same
     # ---------------------------------------------------
+    - name: Debug variables
+      shell: bash
+      run: |
+        echo "base_ref=${{ github.base_ref }}"
+        echo "head_ref=${{ github.head_ref }}"
+        echo "ref_name=${{ github.ref_name }}"
+
     - name: Setup Ref
       shell: bash
       # TODO: 
