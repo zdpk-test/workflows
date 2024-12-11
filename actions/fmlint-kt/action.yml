@@ -58,7 +58,7 @@ runs:
 
         # 2-1. Push from target branch to target branch
         elif [[ "${{ github.ref_name }}" == "${{ inputs.branch }}" ]]; then
-            BASE_REF=${{ inputs.branch }}^
+            BASE_REF=${{ inputs.branch }}
             HEAD_REF=${{ inputs.branch }}
 
           # 2-2. Push from other branch to target branch & other events
