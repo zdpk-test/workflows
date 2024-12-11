@@ -54,7 +54,7 @@ runs:
 
         # 2-1. Push from target branch to target branch
         elif [[ "${{ github.ref_name }}" == "${{ inputs.branch }}" ]]; then
-            BASE_REF=${{ inputs.branch }}~1
+            BASE_REF=${{ inputs.branch }}^
             HEAD_REF=${{ inputs.branch }}
 
           # 2-2. Push from other branch to target branch & other events
@@ -93,7 +93,7 @@ runs:
       id: changed_files
       shell: bash
       run: |
-        changed_files=$(git diff --name-only ${{ env.base_ref }} ${{ env.head_ref }})
+        changed_files=$(git diff --name-only origin/${{ env.base_ref }} origin/${{ env.head_ref }})
         filtered_changed_files=$(echo "$changed_files" | grep -E "\.kt$")
           
         echo "changed_files=$filtered_changed_files" >> $GITHUB_ENV
