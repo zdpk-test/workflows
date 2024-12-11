@@ -46,6 +46,12 @@ runs:
         echo "base_ref=main" >> $GITHUB_ENV
         echo "head_ref=$HEAD_REF" >> $GITHUB_ENV
         
+    - name: Debug Env
+      shell: bash
+      run: |
+        echo ${{ env.base_ref }}
+        echo ${{ env.head_ref }}
+        echo ${{ env }}
 
     # - name: Checkout the code
     #   shell: bash
