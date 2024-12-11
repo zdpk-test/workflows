@@ -74,6 +74,7 @@ runs:
         echo ===========DEBUG ENV===============
         echo "env.base_ref=${{ env.base_ref }}"
         echo "env.head_ref=${{ env.head_ref }}"
+        echo "rev-parse inputsbranch=$(git rev-parse ${{ inputs.branch }})"
         echo ===================================
 
     # - name: Checkout the code
