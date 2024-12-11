@@ -1,0 +1,70 @@
+name: "s"
+description: ""
+inputs:
+  lang:
+    description: The action to use for setting up the language
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Validate inputs
+      shell: bash
+      run: |
+        if [ -z "${{ inputs.lang }}" ]; then
+          echo "The lang input is required"
+          exit 1
+        fi
+
+    # base_ref = target branch, head_ref = source branch
+    # ref_name = current branch(workflow triggered by PR)
+    # ---------------------------------------------------
+    # if this action is triggered by a PR,
+    # the base_ref is target branch
+    # if this action is triggered by any other event,
+    # the base_ref will be `null`
+    # and head_ref will be the same
+    # ---------------------------------------------------
+    - name: Setup Ref
+      shell: bash
+      run: |
+        BASE_REF=${{ github.base_ref }}
+        HEAD_REF=${{ github.head_ref }}
+        if [[ -n "${{ BASE_REF }}"]]; then
+          BASE_REF=${{ github.event.before }}
+        fi
+        if [[ -n "${{ HEAD_REF }}"]]; then
+          HEAD_REF=${{ github.event.before }}
+        fi
+        
+
+    - name: Checkout the code
+      shell: bash
+      uses: actions/checkout@v5
+      with:
+        ref: "main"
+
+    - name: Setup Language
+      shell: bash
+      uses: actions/setup-java@v2
+      with:
+        distribution: "temurin"
+        java-version: "21"
+
+    - name: Filter files to format & lint
+      id: changed_files
+      shell: bash
+      run: |
+        changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+        filtered_changed_files=$(echo "$changed_files" | grep -E "\.kt$")
+          
+        echo "changed_files=$filtered_changed_files" >> $GITHUB_ENV
+
+    - name: Format & Lint code
+      shell: bash
+      run: |
+        echo "${{ env.changed_files }}" | xargs -I {} ./gradlew ktlintCheck --info -PsourceFile={}
+
+    # - name: Lint code
+    #   shell: bash
+    #   run: |
+    #     echo "${{ env.changed_files }}" | xargs -I {} ./gradlew ktlintCheck -PsourceFile={}
