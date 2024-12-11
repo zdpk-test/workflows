@@ -53,7 +53,7 @@ runs:
         elif [[ "${{ github.event_name }}" == "push" ]]; then
 
           # 2-1. Push from target branch to target branch
-          if [[ "${{ github.ref }}" == "${{ inputs.branch }}" ]]; then
+          if [[ "${{ github.ref_name }}" == "${{ inputs.branch }}" ]]; then
             BASE_REF=${{ inputs.branch }}
             HEAD_REF=${{ inputs.branch }}
           fi
