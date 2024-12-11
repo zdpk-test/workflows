@@ -117,7 +117,8 @@ runs:
         echo "changed_files=$changed_files"
         echo "filtered_changed_files=$filtered_changed_files"
         
-        echo "changed_files=$filtered_changed_files" >> $GITHUB_ENV
+        # Ensure that the value is a single line and format it correctly for GITHUB_ENV
+        echo "changed_files=${filtered_changed_files//$'\n'/ }" >> $GITHUB_ENV
 
     - name: Debug changed files
       shell: bash
@@ -129,6 +130,7 @@ runs:
     - name: Format & Lint code
       shell: bash
       run: |
+        echo "${{ env.changed_files }}" | xargs -I {} ./gradlew ktlintCheck --info -PsourceFile={}
         echo "${{ env.changed_files }}" | xargs -I {} ./gradlew ktlintCheck --info -PsourceFile={}
 
     # - name: Lint code
