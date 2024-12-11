@@ -1,19 +1,19 @@
 name: "s"
 description: ""
-inputs:
-  lang:
-    description: The action to use for setting up the language
-    required: true
+# inputs:
+  # lang:
+  #   description: The action to use for setting up the language
+  #   required: true
 runs:
   using: composite
   steps:
-    - name: Validate inputs
-      shell: bash
-      run: |
-        if [ -z "${{ inputs.lang }}" ]; then
-          echo "The lang input is required"
-          exit 1
-        fi
+    # - name: Validate inputs
+    #   shell: bash
+    #   run: |
+    #     if [ -z "${{ inputs.lang }}" ]; then
+    #       echo "The lang input is required"
+    #       exit 1
+    #     fi
 
     # base_ref = target branch, head_ref = source branch
     # ref_name = current branch(workflow triggered by PR)
