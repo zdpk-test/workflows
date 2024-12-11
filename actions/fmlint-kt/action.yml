@@ -24,12 +24,14 @@ runs:
     # the base_ref will be `null`
     # and head_ref will be the same
     # ---------------------------------------------------
-    - name: Debug variables
+    - name: Debug Refs
       shell: bash
       run: |
+        echo ===========DEBUG REF===============
         echo "base_ref=${{ github.base_ref }}"
         echo "head_ref=${{ github.head_ref }}"
         echo "ref_name=${{ github.ref_name }}"
+        echo ===================================
 
     - name: Setup Ref
       shell: bash
@@ -49,9 +51,11 @@ runs:
     - name: Debug Env
       shell: bash
       run: |
-        echo ${{ env.base_ref }}
-        echo ${{ env.head_ref }}
+        echo ===========DEBUG ENV===============
+        echo "env.base_ref=${{ env.base_ref }}""
+        echo "${{ env.head_ref }}""
         echo ${{ env }}
+        echo ===================================
 
     # - name: Checkout the code
     #   shell: bash
