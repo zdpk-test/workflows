@@ -37,14 +37,14 @@ runs:
       shell: bash
       # TODO: 
       run: |
-        BASE_REF=${{ github.base_ref }}
-        HEAD_REF=${{ github.head_ref }}
-        if [[ -n "$BASE_REF" ]]; then
-           BASE_REF=main
-        fi
-        if [[ -n "$HEAD_REF" ]]; then
+        if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          BASE_REF=${{ github.event.pull_request.base.ref }}
+          HEAD_REF=${{ github.event.pull_request.head.ref }}
+        else
+          BASE_REF="main"
           HEAD_REF=${{ github.ref_name }}
         fi
+
         echo "base_ref=main" >> $GITHUB_ENV
         echo "head_ref=$HEAD_REF" >> $GITHUB_ENV
         
