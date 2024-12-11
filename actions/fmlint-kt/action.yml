@@ -100,13 +100,19 @@ runs:
       id: changed_files
       shell: bash
       run: |
-        # 첫 커밋인 경우, 
-        if git rev-parse --verify HEAD~1 &> /dev/null; then
+        git fetch --depth=1 origin ${{ env.base_ref }}
+        
+        # Check if there are any previous commits
+        if git rev-parse HEAD^ &> /dev/null; then
+          # If there are previous commits, compare with the base ref
           changed_files=$(git diff --name-only ${{ env.base_ref }} ${{ env.head_ref }})
         else
-          changed_files=$(git diff --name-only HEAD)
+          # If this is the first commit, list all files
+          changed_files=$(git ls-files)
         fi
-        filtered_changed_files=$(echo "$changed_files" | grep -E "\.kt$")
+        
+        # Filter for Kotlin files
+        filtered_changed_files=$(echo "$changed_files" | grep -E "\.kt$" || true)
           
         echo "changed_files=$filtered_changed_files" >> $GITHUB_ENV
 
