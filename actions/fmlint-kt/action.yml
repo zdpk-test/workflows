@@ -34,6 +34,9 @@ runs:
         echo "base_ref=${{ github.base_ref }}"
         echo "head_ref=${{ github.head_ref }}"
         echo "ref_name=${{ github.ref_name }}"
+        echo "event_name=${{ github.event_name }}"
+        echo "ref=${{ github.ref }}"
+        echo "inputs.branch=${{ inputs.branch }}"
         echo ===================================
 
     - name: Setup Ref
