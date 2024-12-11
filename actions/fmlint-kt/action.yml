@@ -4,6 +4,10 @@ inputs:
   branch:
     description: "Branch name to progress the action"
     default: "main"
+outputs:
+  status:
+    description: "Status of the action"
+    value: ${{ steps.changed_files.outputs.status }}
 runs:
   using: composite
   steps:
@@ -94,9 +98,7 @@ runs:
       id: changed_files
       shell: bash
       run: |
-        git fetch origin ${{ inputs.branch }}
-        git branch -a
-        changed_files=$(git diff --name-only origin/${{ env.base_ref }} origin/${{ env.head_ref }})
+        changed_files=$(git diff --name-only)
         filtered_changed_files=$(echo "$changed_files" | grep -E "\.kt$")
           
         echo "changed_files=$filtered_changed_files" >> $GITHUB_ENV
