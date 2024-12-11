@@ -64,6 +64,8 @@ runs:
           # 2-2. Push from other branch to target branch & other events
           # not supported
         else
+          BASE_REF=${{ inputs.branch }}
+          HEAD_REF=${{ github.ref_name }}
           echo "Unsupported event: ${{ github.event_name }}"
           echo "Only push and pull_request events are supported"
           exit 1
@@ -98,7 +100,12 @@ runs:
       id: changed_files
       shell: bash
       run: |
-        changed_files=$(git diff --name-only)
+        # 첫 커밋인 경우, 
+        if git rev-prase --verify HEAD~1 &> /dev/null; then
+          changed_files=$(git diff --name-only ${{ env.base_ref }} ${{ env.head_ref }})
+        else
+          changed_files=$(git diff --name-only HEAD)
+        fi
         filtered_changed_files=$(echo "$changed_files" | grep -E "\.kt$")
           
         echo "changed_files=$filtered_changed_files" >> $GITHUB_ENV
