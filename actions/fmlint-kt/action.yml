@@ -29,10 +29,10 @@ runs:
       run: |
         BASE_REF=${{ github.base_ref }}
         HEAD_REF=${{ github.head_ref }}
-        if [[ -n "${{ BASE_REF }}"]]; then
+        if [[ -n "$BASE_REF"]]; then
           BASE_REF=${{ github.event.before }}
         fi
-        if [[ -n "${{ HEAD_REF }}"]]; then
+        if [[ -n "$HEAD_REF"]]; then
           HEAD_REF=${{ github.event.before }}
         fi
         
@@ -54,7 +54,7 @@ runs:
       id: changed_files
       shell: bash
       run: |
-        changed_files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+        changed_files=$(git diff --name-only ${{ github.base_ref }} ${{ github.head_ref }})
         filtered_changed_files=$(echo "$changed_files" | grep -E "\.kt$")
           
         echo "changed_files=$filtered_changed_files" >> $GITHUB_ENV
