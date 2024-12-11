@@ -29,11 +29,11 @@ runs:
       run: |
         BASE_REF=${{ github.base_ref }}
         HEAD_REF=${{ github.head_ref }}
-        if [[ -n "$BASE_REF"]]; then
+        if [[ -n "$BASE_REF" ]]; then
           # BASE_REF=${{ github.event.before }}
           echo "base_ref=main" >> $GITHUB_ENV
         fi
-        if [[ -n "$HEAD_REF"]]; then
+        if [[ -n "$HEAD_REF" ]]; then
           HEAD_REF=${{ github.ref_name }}
           echo "head_ref=$HEAD_REF" >> $GITHUB_ENV
         fi
