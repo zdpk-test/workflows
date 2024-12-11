@@ -116,6 +116,13 @@ runs:
           
         echo "changed_files=$filtered_changed_files" >> $GITHUB_ENV
 
+    - name: Debug changed files
+      shell: bash
+      run: |
+        echo ========DEBUG CHANGED FILES===========
+        echo "changed_files=${{ env.changed_files }}"
+        echo ======================================
+
     - name: Format & Lint code
       shell: bash
       run: |

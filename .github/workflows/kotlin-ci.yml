@@ -10,5 +10,11 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@v4
 
-      - name: Setup
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: "terumrin"
+          java-version: "21"
+
+      - name: Linting
         uses: zdpk/workflows/actions/fmlint-kt@main
