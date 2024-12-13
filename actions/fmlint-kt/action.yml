@@ -100,6 +100,7 @@ runs:
         else 
           diff_args="diff --name-only ${{ github.event.before }} ${{ github.ref_name }}"
         fi
+        echo "debug diff_args=$diff_args"
 
         echo "diff_args=$diff_args" >> $GITHUB_ENV
     - name: Filter files to format & lint
