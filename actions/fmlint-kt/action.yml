@@ -43,36 +43,36 @@ runs:
         echo "inputs.branch=${{ inputs.branch }}"
         echo ===================================
 
-    - name: Setup Ref
-      shell: bash
-      # TODO: 
-      run: |
-        # 1. PR
+    # - name: Setup Ref
+    #   shell: bash
+    #   # TODO: 
+    #   run: |
+    #     # 1. PR
 
-        if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-          BASE_REF=${{ github.base_ref }}
-          HEAD_REF=${{ github.head_ref }}
+    #     if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+    #       BASE_REF=${{ github.base_ref }}
+    #       HEAD_REF=${{ github.head_ref }}
 
-        # 2. Push | workflow_dispatch | 
-        # elif [[ "${{ github.event_name }}" == "push" ]]; then
+    #     # 2. Push | workflow_dispatch | 
+    #     # elif [[ "${{ github.event_name }}" == "push" ]]; then
 
-        # 2-1. Push from target branch to target branch
-        elif [[ "${{ github.ref_name }}" == "${{ inputs.branch }}" ]]; then
-            BASE_REF=${{ inputs.branch }}
-            HEAD_REF=${{ inputs.branch }}
+    #     # 2-1. Push from target branch to target branch
+    #     elif [[ "${{ github.ref_name }}" == "${{ inputs.branch }}" ]]; then
+    #         BASE_REF=${{ inputs.branch }}
+    #         HEAD_REF=${{ inputs.branch }}
 
-          # 2-2. Push from other branch to target branch & other events
-          # not supported
-        else
-          BASE_REF=${{ inputs.branch }}
-          HEAD_REF=${{ github.ref_name }}
-          echo "Unsupported event: ${{ github.event_name }}"
-          echo "Only push and pull_request events are supported"
-          exit 1
-        fi
+    #       # 2-2. Push from other branch to target branch & other events
+    #       # not supported
+    #     else
+    #       BASE_REF=${{ inputs.branch }}
+    #       HEAD_REF=${{ github.ref_name }}
+    #       echo "Unsupported event: ${{ github.event_name }}"
+    #       echo "Only push and pull_request events are supported"
+    #       exit 1
+    #     fi
 
-        echo "base_ref=$BASE_REF" >> $GITHUB_ENV
-        echo "head_ref=$HEAD_REF" >> $GITHUB_ENV
+    #     echo "base_ref=$BASE_REF" >> $GITHUB_ENV
+    #     echo "head_ref=$HEAD_REF" >> $GITHUB_ENV
         
     - name: Debug Env
       shell: bash
