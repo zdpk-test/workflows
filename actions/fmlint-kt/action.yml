@@ -84,7 +84,7 @@ runs:
         echo ===================================
 
     - name: Get Diff files
-      id: diff_files
+      id: changed_files
       shell: bash
       run: |
         git fetch --depth=1 origin ${{ env.ref }} 
@@ -95,20 +95,20 @@ runs:
           # If this is the first commit, list all files
           diff_files=$(git ls-files)
 
-        elif [[ ${{ github.event_name }} == "pull_request" ]]; then
+        elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
           diff_files=$(git diff --name-only ${{ github.base_ref }}...${{ github.head_ref }})
         else 
           diff_files=$(git diff --name-only ${{ github.event.before }} ${{ github.ref_name }})
         fi
         echo "diff_files=$diff_files"
 
-        echo "diff_files=$diff_files" >> $GITHUB_ENV
+        echo "changed_files=${diff_files//$'\n'/ }" >> $GITHUB_ENV
     - name: Filter files to format & lint
       id: changed_files
       shell: bash
       run: |
         # Filter for Kotlin files
-        filtered_changed_files=$(echo ${{ env.diff_files }} | grep -E "\.kt$" || true)
+        filtered_changed_files=$(echo ${{ env.changed_files }} | grep -E "\.kt$" || true)
 
         # Ensure that the value is a single line and format it correctly for GITHUB_ENV
         # //$'\n'/ replaces newlines with spaces
