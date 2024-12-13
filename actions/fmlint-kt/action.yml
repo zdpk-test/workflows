@@ -83,8 +83,8 @@ runs:
         echo "rev-parse inputsbranch=$(git rev-parse ${{ inputs.branch }})"
         echo ===================================
 
-    - name: Get Diff Arguments
-      id: diff_args
+    - name: Get Diff files
+      id: diff_files
       shell: bash
       run: |
         git fetch --depth=1 origin ${{ env.ref }} 
@@ -93,22 +93,22 @@ runs:
         if git rev-parse --verify HEAD^ &> /dev/null; then
           
           # If this is the first commit, list all files
-          diff_args="ls-files"
+          diff_files="git ls-files"
 
         elif [[ ${{ github.event_name }} == "pull_request" ]]; then
-          diff_args="diff --name-only ${{ github.base_ref }}...${{ github.head_ref }}"
+          diff_files="git diff --name-only ${{ github.base_ref }}...${{ github.head_ref }}"
         else 
-          diff_args="diff --name-only ${{ github.event.before }} ${{ github.ref_name }}"
+          diff_files="git diff --name-only ${{ github.event.before }} ${{ github.ref_name }}"
         fi
-        echo "debug diff_args=$diff_args"
+        echo "diff_files=$diff_files"
 
-        echo "diff_args=$diff_args" >> $GITHUB_ENV
+        echo "diff_files=$diff_files" >> $GITHUB_ENV
     - name: Filter files to format & lint
       id: changed_files
       shell: bash
       run: |
         # Filter for Kotlin files
-        filtered_changed_files=$(echo ${{ env.changed_files }} | grep -E "\.kt$" || true)
+        filtered_changed_files=$(echo ${{ env.diff_files }} | grep -E "\.kt$" || true)
 
         # Ensure that the value is a single line and format it correctly for GITHUB_ENV
         # //$'\n'/ replaces newlines with spaces
