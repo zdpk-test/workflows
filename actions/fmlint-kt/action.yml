@@ -95,7 +95,7 @@ runs:
           # If this is the first commit, list all files
           diff_args="ls-files"
 
-        elif ${{ github.event_name }} == "pull_request"; then
+        elif [[ ${{ github.event_name }} == "pull_request" ]]; then
           diff_args="diff --name-only ${{ github.base_ref }}...${{ github.head_ref }}"
         else 
           diff_args="diff --name-only ${{ github.event.before }} ${{ github.ref_name }}"
