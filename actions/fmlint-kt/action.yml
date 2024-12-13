@@ -93,12 +93,12 @@ runs:
         if git rev-parse --verify HEAD^ &> /dev/null; then
           
           # If this is the first commit, list all files
-          diff_files="git ls-files"
+          diff_files=$(git ls-files)
 
         elif [[ ${{ github.event_name }} == "pull_request" ]]; then
-          diff_files="git diff --name-only ${{ github.base_ref }}...${{ github.head_ref }}"
+          diff_files=$(git diff --name-only ${{ github.base_ref }}...${{ github.head_ref }})
         else 
-          diff_files="git diff --name-only ${{ github.event.before }} ${{ github.ref_name }}"
+          diff_files=$(git diff --name-only ${{ github.event.before }} ${{ github.ref_name }})
         fi
         echo "diff_files=$diff_files"
 
