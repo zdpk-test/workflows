@@ -111,7 +111,7 @@ runs:
       shell: bash
       run: |
         # Filter for Kotlin files
-        filtered_changed_files=$(echo ${{ env.diff_files }} | grep -E "\.kt$" || true)
+        filtered_changed_files=$(echo ${{ env.diff_files }} | xargs -n 1 | grep -E "\.kt$")
 
         # Ensure that the value is a single line and format it correctly for GITHUB_ENV
         # //$'\n'/ replaces newlines with spaces
