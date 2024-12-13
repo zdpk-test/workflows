@@ -87,7 +87,8 @@ runs:
       id: diff_files
       shell: bash
       run: |
-        git fetch --depth=1 origin ${{ env.ref }} 
+        # git fetch --depth=1 origin ${{ env.ref }} 
+        git fetch --depth=100 origin ${{ env.ref }} 
 
         # Check if there are any previous commits
         if git rev-parse --verify HEAD^ &> /dev/null; then
