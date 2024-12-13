@@ -102,6 +102,8 @@ runs:
           diff_files=$(git diff --name-only ${{ github.event.before }} ${{ github.ref_name }})
         fi
 
+        echo "diff_files=$diff_files"
+
         echo "diff_files=${diff_files//$'\n'/ }" >> $GITHUB_ENV
 
     - name: Filter files to format & lint
