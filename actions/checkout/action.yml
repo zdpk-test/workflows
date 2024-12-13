@@ -1,0 +1,27 @@
+name: "Update Yaml Property"
+description: "A custom action to update a yaml property and create a PR if updated."
+
+inputs:
+  ref:
+    description: "Branch name"
+    default: ""
+  token:
+    description: "GitHub token"
+    default: ""
+  submodules:
+    description: "Submodules to update"
+    default: ""
+  path:
+    description: "Path to the yaml file"
+    default: ""
+  fetch-depth:
+    description: "Fetch depth"
+    default: "0"
+  
+
+runs:
+  using: composite
+  steps:
+    - name: git clone
+      run: |
+        git clone --depth ${{ inputs.fetch-depth }} --branch ${{ inputs.ref }}

@@ -83,42 +83,37 @@ runs:
         echo "rev-parse inputsbranch=$(git rev-parse ${{ inputs.branch }})"
         echo ===================================
 
-    # - name: Checkout the code
-    #   shell: bash
-    #   uses: actions/checkout@v5
-    #   with:
-    #     ref: "main"
+    - name: Get Diff Arguments
+      id: diff_args
+      shell: bash
+      run: |
+        git fetch --depth=1 origin ${{ env.ref }} 
 
-    # - name: Setup Language
-    #   shell: bash
-    #   uses: actions/setup-java@v2
-    #   with:
-    #     distribution: "temurin"
-    #     java-version: "21"
+        # Check if there are any previous commits
+        if git rev-parse --verify HEAD^ &> /dev/null; then
+          
+          # If this is the first commit, list all files
+          diff_args="ls-files"
 
+        elif ${{ github.event_name }} == "pull_request"; then
+          diff_args="diff --name-only ${{ github.base_ref }}...${{ github.head_ref }}"
+        else 
+          diff_args="diff --name-only ${{ github.event.before }} ${{ github.ref_name }}"
+        fi
+
+        echo "diff_args=$diff_args" >> $GITHUB_ENV
     - name: Filter files to format & lint
       id: changed_files
       shell: bash
       run: |
-        git fetch --depth=1 origin ${{ env.base_ref }}
-        
-        # Check if there are any previous commits
-        if git rev-parse HEAD^ &> /dev/null; then
-          # If there are previous commits, compare with the base ref
-          changed_files=$(git diff --name-only ${{ env.base_ref }} ${{ env.head_ref }})
-        else
-          # If this is the first commit, list all files
-          changed_files=$(git ls-files)
-        fi
-        
         # Filter for Kotlin files
-        filtered_changed_files=$(echo "$changed_files" | grep -E "\.kt$" || true)
-          
-        echo "changed_files=$changed_files"
-        echo "filtered_changed_files=$filtered_changed_files"
-        
+        filtered_changed_files=$(echo ${{ env.changed_files }} | grep -E "\.kt$" || true)
+
         # Ensure that the value is a single line and format it correctly for GITHUB_ENV
+        # //$'\n'/ replaces newlines with spaces
         echo "changed_files=${filtered_changed_files//$'\n'/ }" >> $GITHUB_ENV
+
+
 
     - name: Debug changed files
       shell: bash
@@ -130,7 +125,6 @@ runs:
     - name: Format & Lint code
       shell: bash
       run: |
-        echo "${{ env.changed_files }}" | xargs -I {} ./gradlew ktlintCheck --info -PsourceFile={}
         echo "${{ env.changed_files }}" | xargs -I {} ./gradlew ktlintCheck --info -PsourceFile={}
 
     # - name: Lint code

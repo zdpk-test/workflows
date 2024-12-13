@@ -1,0 +1,55 @@
+name: "Docker Build"
+description: "Build a Docker image"
+
+inputs:
+  context:
+    description: "The build context directory"
+    required: true
+    default: "."
+  dockerfile:
+    description: "The Name of Dockerfile to build"
+    required: true
+    default: "Dockerfile"
+  aws_region:
+    description: "AWS Region"
+    required: true
+  ecr_url:
+    description: "ECR URL"
+    required: true
+  tag:
+    description: "Tag for the image"
+    required: true
+  cache-path:
+    description: "Path to cache"
+    required: false
+    default: ""
+  cache-key:
+    description: "Cache key"
+    required: false
+    default: ""
+  cache-restore-keys:
+    description: "Cache restore keys"
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    # Check if buildx and aws cli are installed
+    - name: Debug docker buildx
+      shell: bash
+      run: |
+        docker buildx version
+        docker buildx create --use
+        docker buildx inspect --bootstrap
+
+    - name: Build Docker Image
+      shell: bash
+      run: |
+        docker buildx build \
+          --platform linux/amd64,linux/arm64 \
+          --push \
+          --tag ${{ inputs.image_name }} \
+          --file ${{ inputs.dockerfile }} \
+          ${{ inputs.context }}
+

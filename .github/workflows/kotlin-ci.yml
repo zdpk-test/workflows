@@ -4,17 +4,20 @@ on:
   workflow_call:
 
 jobs:
-  setup:
+  linting:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Linting
+        uses: zdpk/workflows/actions/fmlint-kt@main
+
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the code
         uses: actions/checkout@v4
 
-      - name: Setup Java
-        uses: actions/setup-java@v2
-        with:
-          distribution: "temurin"
-          java-version: "21"
-
-      - name: Linting
-        uses: zdpk/workflows/actions/fmlint-kt@main
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v4
