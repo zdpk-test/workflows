@@ -27,7 +27,7 @@ inputs:
 outputs:
   status:
     description: "Status of the action"
-    value:  ${{ steps.diff.outputs.status }}
+    value: ${{ steps.diff.outputs.status }}
 
 runs:
   using: "composite"
@@ -52,7 +52,7 @@ runs:
         CONFIG_PATH="${{ inputs.dir_path }}/${{ inputs.file_name }}"
         PREV_VAL=$(yq '${{ inputs.property }}' "$CONFIG_PATH")
 
-        if [ "$PREV_VAL" == "${{ inputs.next_val }}" ]; then
+        if [[ "$PREV_VAL" == "${{ inputs.next_val }}" ]]; then
           echo "should_update_tag=true" >> $GITHUB_OUTPUT
           # echo "status=no_change" >> $GITHUB_OUTPUT
           echo "::set-output name=status::no_change"

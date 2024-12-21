@@ -83,13 +83,18 @@ runs:
         echo "rev-parse inputsbranch=$(git rev-parse ${{ inputs.branch }})"
         echo ===================================
 
+    # TODO: exponential retries
+    - name: Fetch git history
+      shell: bash
+      run: |
+        git fetch --depth=100 origin ${{ inputs.branch }}
+        git fetch --depth=100 origin ${{ github.ref_name }}
+        git fetch --depth=100 origin ${{ github.base_ref }}
+    
     - name: Get Diff files
       id: diff_files
       shell: bash
       run: |
-        # git fetch --depth=1 origin ${{ env.ref }} 
-        git fetch --depth=100 origin ${{ env.ref }} 
-
         # Check if there are any previous commits
         if git rev-parse --verify HEAD^ &> /dev/null; then
           
@@ -116,8 +121,6 @@ runs:
         # Ensure that the value is a single line and format it correctly for GITHUB_ENV
         # //$'\n'/ replaces newlines with spaces
         echo "changed_files=${filtered_changed_files//$'\n'/ }" >> $GITHUB_ENV
-
-
 
     - name: Debug changed files
       shell: bash
