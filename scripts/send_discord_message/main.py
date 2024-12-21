@@ -4,7 +4,7 @@ import re
 
 webhook_url = '${{ inputs.discord_webhook_url }}'
 title = '${{ inputs.title }}'
-description = '${{ inputs.description }}'
+description = '${{ inputs.description }}' or ''
 status = '${{ inputs.status }}'
 actor = '${{ inputs.actor }}'
 fields = '${{ inputs.fields }}'
