@@ -8,8 +8,17 @@ description = '${{ inputs.description }}'
 status = '${{ inputs.status }}'
 actor = '${{ inputs.actor }}'
 fields = '${{ inputs.fields }}'
-components = '${{ inputs.components }}'
+components = '${{ inputs.components }}' or {}
+debug = '${{ inputs.debug }}' or False
 
+if debug:
+   print(f"Webhook URL: {webhook_url}")
+   print(f"Title: {title}")
+   print(f"Description: {description}")
+   print(f"Status: {status}")
+   print(f"Actor: {actor}")
+   print(f"Fields: {fields}")
+   print(f"Components: {components}")
 
 if status == "success":
    color = 3066993
