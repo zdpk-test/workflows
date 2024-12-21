@@ -1,4 +1,4 @@
-name: Send Discord Message (Generalized)
+name: Send Notifiacation to Discord and Slack
 on:
   workflow_call:
     secrets:
@@ -9,10 +9,6 @@ on:
         description: Slack Webhook URL
         required: false
     inputs:
-      # discord_webhook_url:
-      #   type: string
-      #   description: "Discord Webhook URL"
-      #   required: true
       title:
         type: string
         description: "Message title"
@@ -98,7 +94,7 @@ jobs:
           ref: main
           path: tmp
           fetch-depth: 0
-          sparse-checkout: scripts/send_discord_message
+          sparse-checkout: scripts/send_notification
           sparse-checkout-cone-mode: true
 
       - name: Set up Python
@@ -119,7 +115,7 @@ jobs:
           COMPONENTS: ${{ inputs.components }}
           DEBUG: ${{ inputs.debug }}
         run: |
-          python ./tmp/scripts/send_discord_message/main.py
+          python ./tmp/scripts/send_notification/main.py
 
   send-slack-message:
     needs: check-targets
@@ -133,7 +129,7 @@ jobs:
           ref: main
           path: tmp
           fetch-depth: 0
-          sparse-checkout: scripts/send_slack_message
+          sparse-checkout: scripts/send_notification
           sparse-checkout-cone-mode: true
 
       - uses: actions/setup-python@v4
@@ -153,4 +149,4 @@ jobs:
           COMPONENTS: ${{ inputs.components }}
           DEBUG: ${{ inputs.debug }}
         run: |
-          python ./tmp/scripts/send_slack_message/main.py
+          python ./tmp/scripts/send_notification/main.py
