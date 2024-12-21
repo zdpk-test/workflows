@@ -71,4 +71,4 @@ jobs:
           FIELDS: ${{ inputs.fields }}
           COMPONENTS: ${{ inputs.components }}
         run: |
-          python ./main.py
+          python ./tmp/scripts/send_discord_message/main.py
