@@ -52,12 +52,14 @@ class Payload:
         }
 
         if self.fields:
-            payload["embeds"][0]["fields"] = serialize_fields(self.fields)
+            payload["embeds"][0]["fields"] = serialize_fields(
+                self.fields, self.platform
+            )
 
         return json.dumps(payload)
 
     def _to_slack_data(self, footer_text: str, footer_icon_url: str) -> str:
-        return {
+        payload = {
             "attachments": [
                 {
                     "fallback": self.title,
@@ -69,6 +71,11 @@ class Payload:
                 }
             ]
         }
+        if self.fields:
+            payload["attachments"][0]["fields"] = serialize_fields(
+                self.fields, self.platform
+            )
+        return json.dumps(payload)
 
     def to_data(self) -> str:
         now = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
@@ -101,6 +108,17 @@ def create_payload(platform: str) -> Payload | None:
         return None
 
     webhook_url = discord_webhook_url if platform == "discord" else slack_webhook_url
-    return Payload(
+    payload = Payload(
         title, description, status, actor, fields, components, platform, webhook_url
     )
+    if debug:
+        print(f"Platform: {platform}")
+        print(f"Webhook URL: {webhook_url}")
+        print(f"Title: {title}")
+        print(f"Description: {description}")
+        print(f"Status: {status}")
+        print(f"Actor: {actor}")
+        print(f"Fields: {fields}")
+        print(f"Components: {components}")
+        print(f"Debug: {debug}")
+    return payload
