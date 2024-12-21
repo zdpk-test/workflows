@@ -39,7 +39,7 @@ footer_icon_url = f"https://github.com/{actor}.png"
 payload = {
     "embeds": [
         {
-            "title": title,
+            "title": f"##{title}",
             "description": description,
             "color": color,
             "footer": {"text": footer_text, "icon_url": footer_icon_url},
