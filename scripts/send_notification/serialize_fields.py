@@ -42,7 +42,7 @@ def _serialize_line(line: str, platform: str) -> list[dict[str, str]]:
     serialized_fields = []
     for field in fields:
         field = field.strip()
-        serialized_field = _serialize_field(field, len(fields) > 1)
+        serialized_field = _serialize_field(field, len(fields) > 1, platform)
         serialized_fields.append(serialized_field)
 
     return serialized_fields
