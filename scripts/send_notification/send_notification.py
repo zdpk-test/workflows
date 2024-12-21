@@ -1,5 +1,5 @@
 import requests
-from scripts.send_notification.payload import Payload
+from send_notification.payload import Payload
 
 
 def send_notification(payload: Payload | None):

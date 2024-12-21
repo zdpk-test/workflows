@@ -1,6 +1,5 @@
 import re
 import sys
-import os
 
 
 def _convert_markdown_links(text: str) -> str:
