@@ -52,11 +52,12 @@ if fields:
 #    payload["components"] = json.loads(components)
 
 headers = {'Content-Type': 'application/json'}
-response = requests.post(webhook_url, data=json.dumps(payload), headers=headers)
+body = {
+   "content": json.dumps(payload),
+}
+response = requests.post(webhook_url, data=body, headers=headers)
 
-print(payload)
-print(json.dumps(payload))
-print(response)
+print(body)
 if response.status_code == 204:
  print("Message sent to Discord successfully!")
 else:
