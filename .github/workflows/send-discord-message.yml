@@ -50,7 +50,7 @@ jobs:
 
       - name: Change Directory
         run: |
-          cd tmp
+          cd tmp/scripts/send_discord_message
           echo "Changed directory to $(pwd)"
           echo "Listing files in $(ls -al)"
 
@@ -71,4 +71,4 @@ jobs:
           FIELDS: ${{ inputs.fields }}
           COMPONENTS: ${{ inputs.components }}
         run: |
-          python ./scripts/send-discord-message.py
+          python ./main.py
