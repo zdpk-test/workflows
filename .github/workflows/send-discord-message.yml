@@ -57,4 +57,4 @@ jobs:
           FIELDS: ${{ inputs.fields }}
           COMPONENTS: ${{ inputs.components }}
         run: |
-          python .github/workflows/send-discord-message.py
+          python ./scripts/send-discord-message.py
