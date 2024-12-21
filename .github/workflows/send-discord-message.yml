@@ -43,6 +43,7 @@ on:
         default: false
 jobs:
   debug:
+    if: ${{ inputs.debug == true }}
     runs-on: ubuntu-latest
     steps:
       - name: Debug Inputs
