@@ -5,7 +5,7 @@ import os
 
 from serialize_fields import serialize_fields
 
-webhook_url = os.getenv("SLACK_WEBHOOK_URL")
+webhook_url = os.getenv("DISCORD_WEBHOOK_URL")
 title = os.getenv("TITLE")
 description = os.getenv("DESCRIPTION")
 status = os.getenv("STATUS")
@@ -34,20 +34,21 @@ footer_icon_url = f"https://github.com/{actor}.png"
 
 
 payload = {
-    "attachments": [
+    "embeds": [
         {
-            "fallback": title,
-            "color": color,
             "title": title,
-            "text": description,
-            "footer": footer_text,
-            "footer_icon": footer_icon_url,
+            "description": description,
+            "color": color,
+            "footer": {"text": footer_text, "icon_url": footer_icon_url},
         }
     ],
 }
 
 if fields:
-    payload["attachments"][0]["fields"] = serialize_fields(fields)
+    payload["embeds"][0]["fields"] = serialize_fields(fields)
+
+# if components:
+#    payload["components"] = json.loads(components)
 
 headers = {"Content-Type": "application/json"}
 data = json.dumps(payload)
@@ -56,7 +57,7 @@ response = requests.post(webhook_url, data=data, headers=headers)
 
 print(data)
 if response.status_code == 204:
-    print("Message sent to Slack successfully!")
+    print("Message sent to Discord successfully!")
 else:
-    print(f"Failed to send message to Slack. Status code: {response.status_code}")
+    print(f"Failed to send message to Discord. Status code: {response.status_code}")
     print(response.text)
