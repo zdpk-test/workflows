@@ -1,5 +1,6 @@
 import json
 
+
 def handle_field(field: str, inline: bool) -> dict[str, str]:
     kv = field.split("::")
     if len(kv) > 2:
@@ -8,26 +9,25 @@ def handle_field(field: str, inline: bool) -> dict[str, str]:
     k = kv[0] if len(kv) > 1 else ""
     v = kv[1] if len(kv) > 1 else kv[0]
 
-    ret = {
-        "name":k.strip(),
-        "value": v.strip(),
-        "inline": inline
-    }
+    ret = {"name": k.strip(), "value": v.strip(), "inline": inline}
     return ret
+
 
 # handle_field("field1:: abc")
 # handle_field("field1")
 
+
 def handle_line(line: str):
-    fields = line.strip().split(',')
+    fields = line.strip().split(",")
     json_fields = []
     for field in fields:
         field = field.strip()
-        handled_field = handle_field(field, len(fields) > 0)
+        handled_field = handle_field(field, len(fields) > 1)
         json_fields.append(handled_field)
-    
+
     # json_fields = json.dumps(json_fields, indent=4)
     return json_fields
+
 
 def serialize_fields(text: str):
     handled_lines = []
@@ -38,11 +38,8 @@ def serialize_fields(text: str):
         fields = handle_line(line)
         handled_lines.extend(fields)
 
-    
     # return json.dumps(handled_lines, indent=4)
     return handled_lines
-
-
 
 
 # def split_fields(line: str):
@@ -72,4 +69,3 @@ def serialize_fields(text: str):
 #         field4: zzz
 #         field5: qwe, field6: asd, field7: ef
 #               """)
-
