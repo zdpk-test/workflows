@@ -67,7 +67,7 @@ jobs:
           python -m pip install requests
       - name: Send Discord Message
         env:
-          DISCORD_WEBHOOK_URL: ${{ inputs.discord_webhook_url }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           MESSAGE_TITLE: ${{ inputs.title }}
           DESCRIPTION: ${{ inputs.description }}
           STATUS: ${{ inputs.status }}
