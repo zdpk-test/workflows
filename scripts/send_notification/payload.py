@@ -100,4 +100,7 @@ def create_payload(platform: str) -> Payload | None:
     if platform == "slack" and slack_webhook_url is None:
         return None
 
-    return Payload(title, description, status, actor, fields, components, platform)
+    webhook_url = discord_webhook_url if platform == "discord" else slack_webhook_url
+    return Payload(
+        title, description, status, actor, fields, components, platform, webhook_url
+    )
