@@ -91,17 +91,7 @@ jobs:
     needs: check-targets
     if: needs.check-targets.outputs.discord == 'true'
     steps:
-      - name: Check Use Discord
-        id: check-discord
-        run: |
-          if [[ -z "${{ secrets.DISCORD_WEBHOOK_URL }}" ]]; then
-            echo "Discord Webhook URL is not set"
-            exit 0
-          fi
-
-          echo "Discord Webhook URL is set"
       - name: Checkout code
-        if: steps.check-discord.outputs.status == 'true'
         uses: actions/checkout@v4
         with:
           repository: zdpk/workflows
