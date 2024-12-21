@@ -1,7 +1,7 @@
 import requests
 import json
-import re
 import os
+from datetime import datetime
 
 from serialize_fields import serialize_fields
 
@@ -22,16 +22,16 @@ if debug:
     print(f"Actor: {actor}")
     print(f"Fields: {fields}")
     print(f"Components: {components}")
-    debug = True
 
 if status == "success":
-    color = 3066993
+    color = "good"
 else:
-    color = 15158332
+    color = "danger"
 
-footer_text = f"Created by @{actor} • %{{now('%Y/%m/%d %H:%M')}}"
+current_time = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
+
+footer_text = f"Created by {actor} • {current_time}"
 footer_icon_url = f"https://github.com/{actor}.png"
-
 
 payload = {
     "attachments": [
@@ -41,13 +41,14 @@ payload = {
             "title": title,
             "text": description,
             "footer": footer_text,
-            "footer_icon": footer_icon_url,
+            "footer_icon": f"https://github.com/{actor}.png",
         }
     ],
 }
 
 if fields:
-    payload["attachments"][0]["fields"] = serialize_fields(fields)
+    fields_list = serialize_fields(fields)
+    payload["attachments"][0]["fields"] = fields_list
 
 headers = {"Content-Type": "application/json"}
 data = json.dumps(payload)
@@ -55,7 +56,7 @@ data = json.dumps(payload)
 response = requests.post(webhook_url, data=data, headers=headers)
 
 print(data)
-if response.status_code == 204:
+if response.status_code == 200:
     print("Message sent to Slack successfully!")
 else:
     print(f"Failed to send message to Slack. Status code: {response.status_code}")

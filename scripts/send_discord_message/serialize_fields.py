@@ -1,6 +1,3 @@
-import json
-
-
 def handle_field(field: str, inline: bool) -> dict[str, str]:
     kv = field.split("::")
     if len(kv) > 2:
@@ -11,10 +8,6 @@ def handle_field(field: str, inline: bool) -> dict[str, str]:
 
     ret = {"name": k.strip(), "value": v.strip(), "inline": inline}
     return ret
-
-
-# handle_field("field1:: abc")
-# handle_field("field1")
 
 
 def handle_line(line: str):
