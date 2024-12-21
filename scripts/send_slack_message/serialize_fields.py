@@ -1,3 +1,11 @@
+import re
+
+
+def convert_markdown_links(text: str) -> str:
+    # [name](url) 형태의 링크를 <url|name> 형식으로 변환
+    return re.sub(r"\[([^\]]+)\]\(([^)]+)\)", r"<\2|\1>", text)
+
+
 def handle_field(field: str, inline: bool) -> dict:
     kv = field.split("::")
     if len(kv) > 2:
@@ -5,6 +13,7 @@ def handle_field(field: str, inline: bool) -> dict:
         exit(1)
     k = kv[0] if len(kv) > 1 else ""
     v = kv[1] if len(kv) > 1 else kv[0]
+    v = convert_markdown_links(v)
 
     ret = {"title": k.strip(), "value": v.strip(), "short": inline}
     return ret
