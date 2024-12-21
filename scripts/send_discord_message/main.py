@@ -11,7 +11,7 @@ fields = '${{ inputs.fields }}'
 components = '${{ inputs.components }}' or {}
 debug = '${{ inputs.debug }}' or False
 
-if debug:
+if debug == 'true':
    print(f"Webhook URL: {webhook_url}")
    print(f"Title: {title}")
    print(f"Description: {description}")
@@ -19,6 +19,7 @@ if debug:
    print(f"Actor: {actor}")
    print(f"Fields: {fields}")
    print(f"Components: {components}")
+   debug = True
 
 if status == "success":
    color = 3066993
