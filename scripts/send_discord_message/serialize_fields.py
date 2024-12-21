@@ -39,7 +39,8 @@ def serialize_fields(text: str):
         handled_lines.extend(fields)
 
     
-    return json.dumps(handled_lines, indent=4)
+    # return json.dumps(handled_lines, indent=4)
+    return handled_lines
 
 
 
