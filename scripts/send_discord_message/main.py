@@ -2,6 +2,7 @@ import requests
 import json
 import re
 import os
+from datetime import datetime
 
 from serialize_fields import serialize_fields
 
@@ -29,7 +30,9 @@ if status == "success":
 else:
     color = 15158332
 
-footer_text = f"Created by @{actor} • %{{now('%Y/%m/%d %H:%M')}}"
+current_time = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
+
+footer_text = f"Created by {actor} • {current_time}"
 footer_icon_url = f"https://github.com/{actor}.png"
 
 
