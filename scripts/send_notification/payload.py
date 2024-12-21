@@ -76,10 +76,10 @@ class Payload:
         footer_icon_url = f"https://github.com/{self.actor}.png"
 
         if self.platform == "slack":
-            return self._to_slack_data(now, footer_text, footer_icon_url)
+            return self._to_slack_data(footer_text, footer_icon_url)
 
         if self.platform == "discord":
-            return self._to_discord_data(now, footer_text, footer_icon_url)
+            return self._to_discord_data(footer_text, footer_icon_url)
 
         raise ValueError("Invalid platform - must be either 'discord' or 'slack'")
 
