@@ -1,16 +1,16 @@
 import requests
 import json
 import re
+import os
 
-webhook_url = '${{ inputs.discord_webhook_url }}'
-title = '${{ inputs.title }}'
-description = '${{ inputs.description }}' or ''
-status = '${{ inputs.status }}'
-actor = '${{ inputs.actor }}'
-fields = '${{ inputs.fields }}'
-components = '${{ inputs.components }}' or {}
-# debug = '${{ inputs.debug }}' or False
-debug = True
+webhook_url = os.getenv('DISCORD_WEBHOOK_URL')
+title = os.getenv('TITLE')
+description = os.getenv('DESCRIPTION')
+status = os.getenv('STATUS')
+actor = os.getenv('ACTOR')
+fields = os.getenv('FIELDS') or ''
+components = os.getenv('COMPONENTS') or None
+debug = os.getenv('DEBUG') == 'true' or False
 
 if debug:
    print(f"Webhook URL: {webhook_url}")
