@@ -57,10 +57,42 @@ jobs:
           echo "Debug: ${{ inputs.debug }}"
           echo "Discord Webhook URL: ${{ secrets.DISCORD_WEBHOOK_URL }}"
           echo "Slack Webhook URL: ${{ secrets.SLACK_WEBHOOK_URL }}"
+
+  check-targets:
+    runs-on: ubuntu-latest
+    outputs:
+      discord: ${{ steps.discord.outputs.continue }}
+      slack: ${{ steps.slack.outputs.continue }}
+    steps:
+      - name: Check Use Slack
+        id: slack
+        run: |
+          if [[ -z "${{ secrets.SLACK_WEBHOOK_URL }}" ]]; then
+            echo "Slack Webhook URL is not set"
+            echo "continue=false" >> $GITHUB_OUTPUT
+          else
+            echo "Slack Webhook URL is set"
+            echo "continue=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check Use Discord
+        id: discord
+        run: |
+          if [[ -z "${{ secrets.DISCORD_WEBHOOK_URL }}" ]]; then
+            echo "Discord Webhook URL is not set"
+            echo "continue=false" >> $GITHUB_OUTPUT
+          else
+            echo "Discord Webhook URL is set"
+            echo "continue=true" >> $GITHUB_OUTPUT
+          fi
+
   send-discord-message:
     runs-on: ubuntu-latest
+    needs: check-targets
+    if: needs.check-targets.outputs.discord == 'true'
     steps:
       - name: Check Use Discord
+        id: check-discord
         run: |
           if [[ -z "${{ secrets.DISCORD_WEBHOOK_URL }}" ]]; then
             echo "Discord Webhook URL is not set"
@@ -69,6 +101,7 @@ jobs:
 
           echo "Discord Webhook URL is set"
       - name: Checkout code
+        if: steps.check-discord.outputs.status == 'true'
         uses: actions/checkout@v4
         with:
           repository: zdpk/workflows
@@ -105,17 +138,10 @@ jobs:
           python ./tmp/scripts/send_discord_message/main.py
 
   send-slack-message:
+    needs: check-targets
+    if: needs.check-targets.outputs.slack == 'true'
     runs-on: ubuntu-latest
     steps:
-      - name: Check Use Slack
-        run: |
-          if [[ -z "${{ secrets.SLACK_WEBHOOK_URL }}" ]]; then
-            echo "Slack Webhook URL is not set"
-            exit 0
-          fi
-
-          echo "Slack Webhook URL is set"
-
       - name: Checkout code
         uses: actions/checkout@v4
         with:
