@@ -34,6 +34,10 @@ on:
         type: string
         description: "Discord message components (JSON format)"
         required: false
+      debug:
+        type: boolean
+        description: "Debug mode"
+        default: false
 jobs:
   send-message:
     runs-on: ubuntu-latest
@@ -70,5 +74,6 @@ jobs:
           ACTOR: ${{ inputs.actor }}
           FIELDS: ${{ inputs.fields }}
           COMPONENTS: ${{ inputs.components }}
+          DEBUG: ${{ inputs.debug }}
         run: |
           python ./tmp/scripts/send_discord_message/main.py
