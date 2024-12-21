@@ -42,6 +42,20 @@ on:
         description: "Debug mode"
         default: false
 jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Debug Inputs
+        run: |
+          echo "Title: ${{ inputs.title }}"
+          echo "Description: ${{ inputs.description }}"
+          echo "Status: ${{ inputs.status }}"
+          echo "Actor: ${{ inputs.actor }}"
+          echo "Fields: ${{ inputs.fields }}"
+          echo "Components: ${{ inputs.components }}"
+          echo "Debug: ${{ inputs.debug }}"
+          echo "Discord Webhook URL: ${{ secrets.DISCORD_WEBHOOK_URL }}"
+          echo "Slack Webhook URL: ${{ secrets.SLACK_WEBHOOK_URL }}"
   send-discord-message:
     runs-on: ubuntu-latest
     steps:
