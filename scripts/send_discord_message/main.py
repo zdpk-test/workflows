@@ -3,6 +3,8 @@ import json
 import re
 import os
 
+from serialize_fields import serialize_fields
+
 webhook_url = os.getenv('DISCORD_WEBHOOK_URL')
 title = os.getenv('TITLE')
 description = os.getenv('DESCRIPTION')
@@ -42,23 +44,12 @@ payload = {
         }
    }],
 }
+
 if fields:
-   fields_list = []
-   for line in fields.strip().splitlines():
-        line = line.strip()
-        field_items = re.split(r',\s*(?=[^\s])', line)
-        row = []
-        for item in field_items:
-            if ":" in item:
-               key, value = item.split(":", 1)
-               row.append({"name": key.strip(), "value": value.strip(), "inline": True})
-        if row:
-           fields_list.extend(row)
-   payload["embeds"][0]["fields"] = fields_list
+   payload['embeds'][0]['fields'] = serialize_fields(fields)
 
-
-if components:
-   payload["components"] = json.loads(components)
+# if components:
+#    payload["components"] = json.loads(components)
 
 headers = {'Content-Type': 'application/json'}
 response = requests.post(webhook_url, data=json.dumps(payload), headers=headers)
