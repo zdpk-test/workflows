@@ -22,7 +22,7 @@ footer_icon_url = f"https://github.com/{actor}.png"
 
 payload = {
    "embeds": [{
-       "title": message_title,
+       "title": title,
        "description": description,
        "color": color,
         "footer": {
