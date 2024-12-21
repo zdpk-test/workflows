@@ -9,9 +9,10 @@ status = '${{ inputs.status }}'
 actor = '${{ inputs.actor }}'
 fields = '${{ inputs.fields }}'
 components = '${{ inputs.components }}' or {}
-debug = '${{ inputs.debug }}' or False
+# debug = '${{ inputs.debug }}' or False
+debug = True
 
-if debug == 'true':
+if debug:
    print(f"Webhook URL: {webhook_url}")
    print(f"Title: {title}")
    print(f"Description: {description}")
