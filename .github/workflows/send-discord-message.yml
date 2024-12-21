@@ -111,12 +111,6 @@ jobs:
           sparse-checkout: scripts/send_discord_message
           sparse-checkout-cone-mode: true
 
-      - name: Change Directory
-        run: |
-          cd tmp/scripts/send_discord_message
-          echo "Changed directory to $(pwd)"
-          echo "Listing files in $(ls -al)"
-
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -152,14 +146,7 @@ jobs:
           sparse-checkout: scripts/send_slack_message
           sparse-checkout-cone-mode: true
 
-      - name: Change Directory
-        run: |
-          cd tmp/scripts/send_slack_message
-          echo "Changed directory to $(pwd)"
-          echo "Listing files in $(ls -al)"
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - uses: actions/setup-python@v4
         with:
           python-version: "3.9"
       - name: Install dependencies
