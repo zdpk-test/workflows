@@ -3,7 +3,7 @@ from payload import Payload
 
 
 def send_notification(payload: Payload | None):
-    if payload == None:
+    if payload is None:
         return
 
     headers = {"Content-Type": "application/json"}

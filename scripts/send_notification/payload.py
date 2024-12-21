@@ -6,7 +6,17 @@ import os
 
 
 class Payload:
-    def __init__(self, title, description, status, actor, fields, components, platform):
+    def __init__(
+        self,
+        title,
+        description,
+        status,
+        actor,
+        fields,
+        components,
+        platform,
+        webhook_url,
+    ):
         self.title = title
         self.description = description
         self.status = status
@@ -14,6 +24,7 @@ class Payload:
         self.fields = fields
         self.components = components
         self.platform = platform
+        self.webhook_url = webhook_url
 
     def _status_color(self):
         if self.platform == "discord":
@@ -28,7 +39,7 @@ class Payload:
             if self.status == "failure":
                 return "danger"
 
-    def _to_discord_data(self, now: str, footer_text: str, footer_icon_url: str) -> str:
+    def _to_discord_data(self, footer_text: str, footer_icon_url: str) -> str:
         payload = {
             "embeds": [
                 {
@@ -45,7 +56,7 @@ class Payload:
 
         return json.dumps(payload)
 
-    def _to_slack_data(self, now: str, footer_text: str, footer_icon_url: str) -> str:
+    def _to_slack_data(self, footer_text: str, footer_icon_url: str) -> str:
         return {
             "attachments": [
                 {
@@ -53,21 +64,24 @@ class Payload:
                     "color": self._status_color(),
                     "title": self.title,
                     "text": self.description,
-                    "footer": self.footer_text,
-                    "footer_icon": f"https://github.com/{self.actor}.png",
+                    "footer": footer_text,
+                    "footer_icon": footer_icon_url,
                 }
             ]
         }
 
     def to_data(self) -> str:
-        current_time = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
-        footer_text = f"Created by {self.actor} • {current_time}"
+        now = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
+        footer_text = f"Created by {self.actor} • {now}"
         footer_icon_url = f"https://github.com/{self.actor}.png"
 
         if self.platform == "slack":
-            return self._to_slack_data(current_time, footer_text, footer_icon_url)
+            return self._to_slack_data(now, footer_text, footer_icon_url)
+
         if self.platform == "discord":
-            return self._to_discord_data(current_time, footer_text, footer_icon_url)
+            return self._to_discord_data(now, footer_text, footer_icon_url)
+
+        raise ValueError("Invalid platform - must be either 'discord' or 'slack'")
 
 
 def create_payload(platform: str) -> Payload | None:
