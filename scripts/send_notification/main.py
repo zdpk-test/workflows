@@ -1,5 +1,5 @@
 from send_notification import send_notification
-from send_notification.payload import create_payload
+from payload import create_payload
 
 
 platforms = ["discord", "slack"]
