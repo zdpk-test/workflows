@@ -30,9 +30,9 @@ on:
 jobs:
   create-pr:
     outputs:
-      status: ${{ steps.create-pr.outputs.status || 'failure' }}
-      pr_number: ${{ steps.create-pr.outputs.pr_number }}
-      pr_url: ${{ steps.create-pr.outputs.pr_url }}
+      status: ${{ steps.exist-pr.outputs.status || steps.create-pr.outputs.status || 'failure' }}
+      pr_number: ${{ steps.exist-pr.outputs.pr_number || steps.create-pr.outputs.pr_number }}
+      pr_url: ${{ steps.exist-pr.outputs.pr_url || steps.create-pr.outputs.pr_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -47,36 +47,33 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          pr_exist=$(gh pr list \
+          data=$(gh pr list \
             --base "$base_branch" \
             --head "$head_branch" \
-            --json title)
+            --json number,url)
 
-          if [[ -n "$res" ]]; then
-            pr_exist=true
+          if [[ -n "$data" && "$data" != "[]" ]]; then
+            echo "pr_exist=$pr_exist" >> $GITHUB_OUTPUT
+            echo "pr_number=$pr_number" >> $GITHUB_OUTPUT
+            pr_number=$(jq -r '.number' <<< "$resp")
+            pr_url=$(jq -r '.url' <<< "$resp")
           else
-            pr_exist=false
+            echo "should_create_pr=true" >> $GITHUB_OUTPUT
           fi
-
-          echo "pr_exist=$pr_exist" >> $GITHUB_OUTPUT
 
       - name: Create or Update PR
         id: create-pr
+        if: ${{ steps.exist-pr.outputs.should_create_pr == 'true' }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -e
 
-          if [[ ${{ steps.exist-pr.outputs.exist-pr == 'false' }} ]]; then
-            echo "PR already exist"
-            exit 0
-          else
-            pr_url=$(gh pr create \
-              --head "${{ inputs.head_branch }}" \
-              --base "${{ inputs.base_branch }}" \
-              --title "${{ inputs.title }}" \
-              --body "${{ inputs.body }}")
-          fi
+          gh pr create \
+            --head "${{ inputs.head_branch }}" \
+            --base "${{ inputs.base_branch }}" \
+            --title "${{ inputs.title }}" \
+            --body "${{ inputs.body }}"
 
           pr_number=$(echo "$pr_url" | sed 's|.*/pull/\([0-9]*\)$|\1|')
           echo "pr_number=$pr_number"
