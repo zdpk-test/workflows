@@ -19,71 +19,54 @@ on:
       body:
         type: string
         required: true
+    #
     outputs:
-      status:
-        value: ${{ jobs.create-pr.outputs.status }}
       pr_number:
         value: ${{ jobs.create-pr.outputs.pr_number }}
       pr_url:
         value: ${{ jobs.create-pr.outputs.pr_url }}
-      a:
-        value: ${{ jobs.create-pr.outputs.a }}
       result:
         value: ${{ jobs.create-pr.result }}
 
 jobs:
   create-pr:
     outputs:
-      status: ${{ steps.exist-pr.outputs.status || steps.create-pr.outputs.status || 'failure' }}
-      pr_number: ${{ steps.exist-pr.outputs.pr_number || steps.create-pr.outputs.pr_number }}
-      pr_url: ${{ steps.exist-pr.outputs.pr_url || steps.create-pr.outputs.pr_url }}
-      a: 1
+      pr_number: ${{ steps.create-pr.outputs.pr_number }}
+      pr_url: ${{ steps.create-pr.outputs.pr_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup GH_TOKEN for gh cli
-        run: |
-          echo "GH_TOKEN=${{ secrets.GH_TOKEN }}" >> $GITHUB_OUTPUT
-
-      - name: Check PR is already exist
-        id: exist-pr
+      - name: Create PR
+        id: create-pr
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          set -e
+
           data=$(gh pr list \
             --base "$base_branch" \
             --head "$head_branch" \
             --json number,url)
 
           if [[ -n "$data" && "$data" != "[]" ]]; then
-            echo "pr_exist=$pr_exist" >> $GITHUB_OUTPUT
-            echo "pr_number=$pr_number" >> $GITHUB_OUTPUT
             pr_number=$(jq -r '.number' <<< "$resp")
             pr_url=$(jq -r '.url' <<< "$resp")
           else
-            echo "should_create_pr=true" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Create or Update PR
-        id: create-pr
-        if: ${{ steps.exist-pr.outputs.should_create_pr == 'true' }}
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          set -e
-
-          gh pr create \
+            pr_url=$(gh pr create \
             --head "${{ inputs.head_branch }}" \
             --base "${{ inputs.base_branch }}" \
             --title "${{ inputs.title }}" \
-            --body "${{ inputs.body }}"
+            --body "${{ inputs.body }}")
 
-          pr_number=$(echo "$pr_url" | sed 's|.*/pull/\([0-9]*\)$|\1|')
+            pr_number=$(echo "$pr_url" | sed 's|.*/pull/\([0-9]*\)$|\1|')
+          fi
+
+          #############################
           echo "pr_number=$pr_number"
           echo "pr_url=$pr_url"
+          #############################
 
-          echo "status=success" >> $GITHUB_OUTPUT
           echo "pr_number=$pr_number" >> $GITHUB_OUTPUT
           echo "pr_url=$pr_url" >> $GITHUB_OUTPUT
