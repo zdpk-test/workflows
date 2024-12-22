@@ -62,7 +62,7 @@ jobs:
 
           # -b 대신 -F
           gh pr comment ${{ inputs.pr_number }} \
-            -F body.txt
+            -F body.txt \
             -R ${{ inputs.repository }}
 
           # if [[ $? -eq 0 && "$resp" -ge 200 && "$resp" -lt 300 ]]; then
