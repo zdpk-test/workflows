@@ -61,9 +61,13 @@ jobs:
               --body "${{ inputs.body }}")
 
             pr_number=$(echo "$pr_url" | sed 's|.*/pull/\([0-9]*\)$|\1|')
+
+            echo "new pr created"
           else
             pr_number=$(jq -r '.number' <<< "$resp")
             pr_url=$(jq -r '.url' <<< "$resp")
+
+            echo "pr already exist"
           fi
 
           #############################
