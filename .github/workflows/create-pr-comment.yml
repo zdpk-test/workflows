@@ -52,12 +52,14 @@ jobs:
       # -w --write-out: HTTP status code
       - name: Create PR Comment
         run: |
-          body=$(cat <<-EOF
-            ${{ inputs.body }}
-          EOF)
+          echo "${{ inputs.body }}" > body.txt
+          # body=$(cat <<-EOF
+          #   ${{ inputs.body }}
+          # EOF)
 
+          # -b 대신 -F
           gh pr comment ${{ inputs.pr_number }} \
-            -b "$body" \
+            -F body.txt
             -R ${{ inputs.repository }}
 
           # if [[ $? -eq 0 && "$resp" -ge 200 && "$resp" -lt 300 ]]; then
