@@ -50,6 +50,8 @@ jobs:
       # -w --write-out: HTTP status code
       - name: Create PR Comment
         id: create-pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           resp=(curl -s -o /dev/null -w "%{http_code}" -X POST \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
