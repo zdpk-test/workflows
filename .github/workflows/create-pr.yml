@@ -48,7 +48,8 @@ jobs:
           data=$(gh pr list \
             --base "${{ inputs.base_branch }}" \
             --head "${{ inputs.head_branch }}" \
-            --json number,url)
+            --json number,url \
+            --jq '.[0]')
 
           echo "data=$data"
 
