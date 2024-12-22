@@ -25,6 +25,8 @@ jobs:
       status: ${{ steps.create-pr.outputs.status }}
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
       # -s --silent: hide progress bar of curl
       # -X --request: HTTP method, default: GET
       # -o --output: output file, default: stdout
