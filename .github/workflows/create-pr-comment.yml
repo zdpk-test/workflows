@@ -16,7 +16,7 @@ on:
         description: "Repository name"
         required: true
       pr_number:
-        type: number
+        type: string
         description: "Pull Request number"
         required: true
 jobs:
