@@ -20,7 +20,7 @@ on:
         description: "Pull Request number"
         required: true
 jobs:
-  create-pr:
+  create-comment:
     outputs:
       status: ${{ steps.create-pr.outputs.status }}
     runs-on: ubuntu-latest
