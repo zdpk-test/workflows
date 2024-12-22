@@ -1,7 +1,6 @@
 from send_notification import send_notification
 from payload import create_payload
 
-
 platforms = ["discord", "slack"]
 
 if __name__ == "__main__":
