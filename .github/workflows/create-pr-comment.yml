@@ -25,25 +25,6 @@ jobs:
       status: ${{ steps.create-pr.outputs.status }}
     runs-on: ubuntu-latest
     steps:
-      # - name: Create PR Comment Request Body
-      #   id: body
-      #   run: |
-      #     # body=$(cat <<EOF
-      #     #   {
-      #     #     "title": "${{ inputs.title }}",
-      #     #     "description": "${{ inputs.description }}"
-      #     #   }
-      #     # EOF)
-      #     body=$(jq -n \
-      #       --arg title "${{ inputs.title }}" \
-      #       --arg description "${{ inputs.description }}" \
-      #       '{
-      #           title: $title,
-      #           description: $description
-      #       }')
-
-      #     echo "body=$body" >> $GITHUB_OUTPUT
-
       # -s --silent: hide progress bar of curl
       # -X --request: HTTP method, default: GET
       # -o --output: output file, default: stdout
