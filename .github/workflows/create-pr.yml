@@ -41,7 +41,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           pr_exist=$(gh pr list \
-            -q \
             --base "$base_branch" \
             --head "$head_branch" \
             --json title)
