@@ -61,14 +61,14 @@ jobs:
         run: |
           set -e
 
-          if [[ ${{ steps.exist-pr.outputs.exist-pr }} ]]; then
-            gh pr edit \
-              --head "${{ inputs.head_branch }}" \
-              --base "${{ inputs.base_branch }}" \
-              --title "${{ inputs.title }}" \
-              --body "${{ inputs.body }}"
-
-            gh pr list
+          if [[ ${{ steps.exist-pr.outputs.exist-pr == 'false' }} ]]; then
+            echo "PR already exist"
+            exit 0
+            # gh pr edit \
+            #   --head "${{ inputs.head_branch }}" \
+            #   --base "${{ inputs.base_branch }}" \
+            #   --title "${{ inputs.title }}" \
+            #   --body "${{ inputs.body }}"
           else
             pr_url=$(gh pr create \
               --head "${{ inputs.head_branch }}" \
