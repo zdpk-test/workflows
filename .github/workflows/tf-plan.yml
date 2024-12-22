@@ -1,0 +1,36 @@
+name: Terraform Plan
+
+on:
+  workflow_call:
+    inputs:
+      tf-version:
+        type: string
+        description: "Terraform version"
+        default: "1.9"
+      tf-dir:
+        type: string
+        description: "Terraform directory"
+        required: true
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          working-directory: ${{ inputs.tf-dir }}
+
+      - name: Terraform Setup
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ inputs.tf-version}}
+
+      - name: Terraform Format and Style
+        id: fmt
+        run: |
+          echo "status=success" >> $GITHUB_OUTPUT
+
+      - name: Terraform Plan
+        id: plan
+        run: |
+          terraform plan -out=tfplan

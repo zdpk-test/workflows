@@ -1,0 +1,64 @@
+name: Create Comment of Pull Request
+
+on:
+  workflow_call:
+    secrets:
+      GITHUB_TOKEN:
+        description: "GitHub token"
+        required: true
+    inputs:
+      title:
+        type: string
+        description: "Message title"
+        required: true
+      description:
+        type: string
+        description: "Message content"
+        required: true
+      repository:
+        type: string
+        description: "Repository name"
+        required: true
+      pr_number:
+        type: number
+        description: "Pull Request number"
+        required: true
+jobs:
+  create-pr:
+    outputs:
+      status: ${{ steps.create-pr.outputs.status }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create PR Comment Request Body
+        id: body
+        run: |
+          body=$(jq -n \
+            --arg title "${{ inputs.title }}" \
+            --arg description "${{ inputs.description }}" \
+            '{
+                title: $title,
+                body: $description
+            }')
+
+          echo "body=$body" >> $GITHUB_OUTPUT
+
+      # -s --silent: hide progress bar of curl
+      # -X --request: HTTP method, default: GET
+      # -o --output: output file, default: stdout
+      # -H --header: HTTP header
+      # -d --data: HTTP body
+      # -w --write-out: HTTP status code
+      - name: Create PR Comment
+        id: create-pr
+        run: |
+          resp=(curl -s -o /dev/null -w "%{http_code}" -X POST \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d ${{ steps.body.outputs.body }} \
+            "https://api.github.com/repos/${{ inputs.repository }}/issues/${{ inputs.pr_number }}/comments")
+
+          if [[ $? -eq 0 && "$resp" -ge 200 && "$resp" -lt 300 ]]; then
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+          fi

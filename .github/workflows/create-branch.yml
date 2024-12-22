@@ -1,0 +1,19 @@
+name: Create Branch
+
+on:
+  workflow_call:
+    secrets:
+      GITHUB_TOKEN:
+        description: "GitHub token"
+        required: true
+    inputs:
+      branch_name:
+        type: string
+        description: "Branch name"
+        required: true
+      description:
+        type: string
+        description: "Message content"
+        required: true
+      repository:
+        type: string

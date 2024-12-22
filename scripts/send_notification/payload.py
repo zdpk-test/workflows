@@ -26,24 +26,36 @@ class Payload:
         self.platform = platform
         self.webhook_url = webhook_url
 
+
+class Payload:
+    def __init__(self, platform, status):
+        self.platform = platform
+        self.status = status
+
     def _status_color(self):
         if self.platform == "discord":
             if self.status == "success":
-                return 3066993
+                return 3066993  # Green
             if self.status == "failure":
-                return 15158332
+                return 15158332  # Red
+            if self.status == "no_changes":
+                return 9807270  # Gray
+            return 3447003  # Blue (default)
 
         if self.platform == "slack":
             if self.status == "success":
-                return "good"
+                return "good"  # Green
             if self.status == "failure":
-                return "danger"
+                return "danger"  # Red
+            if self.status == "no_changes":
+                return "#808080"  # Gray
+            return "#0000FF"  # Blue (default)
 
     def _to_discord_data(self, footer_text: str, footer_icon_url: str) -> str:
         payload = {
             "embeds": [
                 {
-                    "title": f"##{self.title}",
+                    "title": f"{self.title}",
                     "description": self.description,
                     "color": self._status_color(),
                     "footer": {"text": footer_text, "icon_url": footer_icon_url},
@@ -102,9 +114,13 @@ def create_payload(platform: str) -> Payload | None:
     components = os.getenv("COMPONENTS")
     debug = os.getenv("DEBUG") == "true" or False
 
-    if platform == "discord" and discord_webhook_url is None:
+    if platform == "discord" and (
+        discord_webhook_url is None or discord_webhook_url.isspace()
+    ):
         return None
-    if platform == "slack" and slack_webhook_url is None:
+    if platform == "slack" and (
+        slack_webhook_url is None or slack_webhook_url.isspace()
+    ):
         return None
 
     webhook_url = discord_webhook_url if platform == "discord" else slack_webhook_url
