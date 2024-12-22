@@ -52,6 +52,7 @@ jobs:
       # -w --write-out: HTTP status code
       - name: Create PR Comment
         run: |
+          echo ${{ inputs.body }}
           # echo "${{ inputs.body }}" > body.txt
           body=$(cat <<-EOF
             ${{ inputs.body }}
