@@ -44,8 +44,9 @@ jobs:
             --head ${{ inputs.head_branch }} \
             --base ${{ inputs.base_branch }} \
             --title ${{ inputs.title }} \
-            --body ${{ inputs.body }}
-            --json number, url)
+            --body ${{ inputs.body }})
+
+          echo "pr_output=$pr_output"
 
           pr_number=$(echo "$pr_output | jq -r '.number')
           pr_url=$(echo "$pr_output | jq -r '.url')
