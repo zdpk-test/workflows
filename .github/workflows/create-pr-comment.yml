@@ -52,7 +52,7 @@ jobs:
       # -w --write-out: HTTP status code
       - name: Create PR Comment
         run: |
-          body=cat $(EOF<<-
+          body=$(cat EOF<<-
             ${{ inputs.body }}
           EOF)
 
