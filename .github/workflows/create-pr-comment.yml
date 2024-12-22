@@ -52,17 +52,6 @@ jobs:
       # -w --write-out: HTTP status code
       - name: Create PR Comment
         run: |
-          echo ${{ inputs.body }}
-          # echo "${{ inputs.body }}" > body.txt
-          body=$(cat <<-EOF
-            ${{ inputs.body }}
-          EOF)
-          echo =================
-          cat body.txt
-          echo =================
-
-          # -F body.txt \
-          # -b 대신 -F
           gh pr comment ${{ inputs.pr_number }} \
             -b ${{ inputs.body }} \
             -R ${{ inputs.repository }}
