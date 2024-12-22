@@ -50,6 +50,8 @@ jobs:
             --head "${{ inputs.head_branch }}" \
             --json number,url)
 
+          echo "data=$data"
+
           if [[ -z "$data" || "$data" == "[]" ]]; then
             pr_url=$(gh pr create \
               --head "${{ inputs.head_branch }}" \
