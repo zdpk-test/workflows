@@ -26,6 +26,10 @@ on:
         value: ${{ jobs.create-pr.outputs.pr_number }}
       pr_url:
         value: ${{ jobs.create-pr.outputs.pr_url }}
+      a:
+        value: ${{ jobs.create-pr.outputs.a }}
+      result:
+        value: ${{ jobs.create-pr.result }}
 
 jobs:
   create-pr:
@@ -33,6 +37,7 @@ jobs:
       status: ${{ steps.exist-pr.outputs.status || steps.create-pr.outputs.status || 'failure' }}
       pr_number: ${{ steps.exist-pr.outputs.pr_number || steps.create-pr.outputs.pr_number }}
       pr_url: ${{ steps.exist-pr.outputs.pr_url || steps.create-pr.outputs.pr_url }}
+      a: 1
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
