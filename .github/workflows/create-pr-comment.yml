@@ -7,13 +7,9 @@ on:
         description: "GitHub token"
         required: true
     inputs:
-      title:
+      body:
         type: string
-        description: "Message title"
-        required: true
-      description:
-        type: string
-        description: "Message content"
+        description: "PR Comment Body"
         required: true
       repository:
         type: string
@@ -29,24 +25,24 @@ jobs:
       status: ${{ steps.create-pr.outputs.status }}
     runs-on: ubuntu-latest
     steps:
-      - name: Create PR Comment Request Body
-        id: body
-        run: |
-          # body=$(cat <<EOF
-          #   {
-          #     "title": "${{ inputs.title }}",
-          #     "description": "${{ inputs.description }}"
-          #   }
-          # EOF)
-          body=$(jq -n \
-            --arg title "${{ inputs.title }}" \
-            --arg description "${{ inputs.description }}" \
-            '{
-                title: $title,
-                description: $description
-            }')
+      # - name: Create PR Comment Request Body
+      #   id: body
+      #   run: |
+      #     # body=$(cat <<EOF
+      #     #   {
+      #     #     "title": "${{ inputs.title }}",
+      #     #     "description": "${{ inputs.description }}"
+      #     #   }
+      #     # EOF)
+      #     body=$(jq -n \
+      #       --arg title "${{ inputs.title }}" \
+      #       --arg description "${{ inputs.description }}" \
+      #       '{
+      #           title: $title,
+      #           description: $description
+      #       }')
 
-          echo "body=$body" >> $GITHUB_OUTPUT
+      #     echo "body=$body" >> $GITHUB_OUTPUT
 
       # -s --silent: hide progress bar of curl
       # -X --request: HTTP method, default: GET
@@ -55,16 +51,13 @@ jobs:
       # -d --data: HTTP body
       # -w --write-out: HTTP status code
       - name: Create PR Comment
-        id: create-pr
         run: |
-          resp=(curl -s -o /dev/null -w "%{http_code}" -X POST \
-            -H "Authorization: Bearer ${{ secrets.GH_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d ${{ steps.body.outputs.body }} \
-            "https://api.github.com/repos/${{ inputs.repository }}/issues/${{ inputs.pr_number }}/comments")
+          gh pr comment ${{ inputs.pr_number }} \
+            -b ${{ inputs.body }}
+            -R ${{ inputs.repository }}
 
-          if [[ $? -eq 0 && "$resp" -ge 200 && "$resp" -lt 300 ]]; then
-            echo "status=success" >> $GITHUB_OUTPUT
-          else
-            echo "status=failure" >> $GITHUB_OUTPUT
-          fi
+          # if [[ $? -eq 0 && "$resp" -ge 200 && "$resp" -lt 300 ]]; then
+          #   echo "status=success" >> $GITHUB_OUTPUT
+          # else
+          #   echo "status=failure" >> $GITHUB_OUTPUT
+          # fi
