@@ -56,6 +56,9 @@ jobs:
           # body=$(cat <<-EOF
           #   ${{ inputs.body }}
           # EOF)
+          echo =================
+          cat body.txt
+          echo =================
 
           # -b 대신 -F
           gh pr comment ${{ inputs.pr_number }} \
