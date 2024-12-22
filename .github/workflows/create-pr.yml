@@ -38,7 +38,7 @@ jobs:
       - name: Create PR
         id: create-pr
         env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -e
 
