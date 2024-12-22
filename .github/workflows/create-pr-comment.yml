@@ -32,12 +32,19 @@ jobs:
       - name: Create PR Comment Request Body
         id: body
         run: |
-          body=$(cat <<EOF
-            {
-              "title": "${{ inputs.title }}",
-              "description": "${{ inputs.description }}"
-            }
-          EOF)
+          # body=$(cat <<EOF
+          #   {
+          #     "title": "${{ inputs.title }}",
+          #     "description": "${{ inputs.description }}"
+          #   }
+          # EOF)
+          body=$(jq -n \
+            --arg title "${{ inputs.title }}" \
+            --arg description "${{ inputs.description }}" \
+            '{
+                title: $title,
+                description: $description
+            }')
 
           echo "body=$body" >> $GITHUB_OUTPUT
 
