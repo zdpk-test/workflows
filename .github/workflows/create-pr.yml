@@ -50,17 +50,17 @@ jobs:
             --head "$head_branch" \
             --json number,url)
 
-          if [[ -n "$data" && "$data" != "[]" ]]; then
-            pr_number=$(jq -r '.number' <<< "$resp")
-            pr_url=$(jq -r '.url' <<< "$resp")
-          else
+          if [[ -z "$data" || "$data" == "[]" ]]; then
             pr_url=$(gh pr create \
-            --head "${{ inputs.head_branch }}" \
-            --base "${{ inputs.base_branch }}" \
-            --title "${{ inputs.title }}" \
-            --body "${{ inputs.body }}")
+              --head "${{ inputs.head_branch }}" \
+              --base "${{ inputs.base_branch }}" \
+              --title "${{ inputs.title }}" \
+              --body "${{ inputs.body }}")
 
             pr_number=$(echo "$pr_url" | sed 's|.*/pull/\([0-9]*\)$|\1|')
+          else
+            pr_number=$(jq -r '.number' <<< "$resp")
+            pr_url=$(jq -r '.url' <<< "$resp")
           fi
 
           #############################
