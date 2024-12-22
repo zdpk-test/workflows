@@ -64,8 +64,8 @@ jobs:
 
             echo "new pr created"
           else
-            pr_number=$(jq -r '.number' <<< "$resp")
-            pr_url=$(jq -r '.url' <<< "$resp")
+            pr_number=$(jq -r '.number' <<< "$data")
+            pr_url=$(jq -r '.url' <<< "$data")
 
             echo "pr already exist"
           fi
