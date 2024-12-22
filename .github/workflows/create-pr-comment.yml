@@ -37,8 +37,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          echo "${{ inputs.body }}" > input.txt
+
           gh pr comment ${{ inputs.pr_number }} \
-            -b ${{ inputs.body }} \
+            -F input.txt \
             -R ${{ inputs.repository }}
 
           # if [[ $? -eq 0 && "$resp" -ge 200 && "$resp" -lt 300 ]]; then
