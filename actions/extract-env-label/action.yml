@@ -1,0 +1,44 @@
+name: "Extract Env Label"
+description: "A custom action to update a yaml property and create a PR if updated."
+
+inputs:
+  token:
+    description: "GitHub token"
+    required: true
+  pr_number:
+    description: "PR number"
+    required: true
+  labels:
+    description: "Labels"
+    required: true
+outputs:
+  env:
+    value: ${{ steps.filter-labels.outputs.env }}
+    description: "Environment label"
+runs:
+  using: composite
+  steps:
+    - name: Fetch labels that a given PR has
+      id: fetch-labels
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+      run: |
+        repo="repos/$repo/issues/$pr_number/labels"
+        labels=$(gh api "$repo" --jq '.[].name')
+        labels=$(echo "$labels" | jq -r 'map(select(. == "dev" or . == "test" or . == "stag" or . == "qa" or . == "prod"))')
+        echo "labels=$labels" >> $GITHUB_OUTPUT
+
+    - name: Filter env labels
+      id: filter-labels
+      shell: bash
+      run: |
+        labels="${{ steps.fetch-labels.outputs.labels }}"
+        len=$(echo "$labels" | jq 'length')
+
+        if [ "$len" -ne 1 ]; then
+          echo "Error: Expected exactly one environment label, but found $len"
+          exit 1
+        fi
+
+        env=$(echo "$labels" | jq -r '.[0]')

@@ -1,0 +1,59 @@
+name: Cargo Release
+description: "Release a new version of the project"
+
+on:
+  workflow_call:
+    inputs:
+      rust-version:
+        description: "Rust toolchain version"
+        required: false
+        default: "stable"
+        type: string
+      release-file-name:
+        description: "Release file name (default: cargo package name)"
+        required: false
+        type: string
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          rust-version: ${{ inputs.rust-version }}
+
+      - name: Cache cargo registry, git, and target
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Build
+        run: cargo build --release
+
+      - name: Set Cargo package name
+        if: ${{ !inputs.release-file-name }}
+        id: set_release_file_name
+        run: |
+          if [ -z "${{ inputs.release-file-name }}" ]; then
+              release_file_name=$(cargo metadata --no-deps --format-version 1 \
+                  | jq -r '.packages[0].name')
+          else
+              release_file_name="${{ inputs.release-file-name }}"
+          fi
+          echo "release_file_name=${release_file_name}" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            target/release/${{ steps.set_release_file_name.outputs.release_file_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
