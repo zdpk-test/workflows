@@ -1,5 +1,4 @@
 name: Cargo Release
-description: "Release a new version of the project"
 
 on:
   workflow_call:
